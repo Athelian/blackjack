@@ -82,7 +82,7 @@ const gameOver = () => {
     return dealerWins++, "You lose!";
   if (dealerTotal === "Bust" || playerTotal === "Blackjack")
     return playerWins++, "You win!";
-  if (dealerTotal > playerTotal) return dealerWins++, "You win!";
+  if (dealerTotal > playerTotal) return dealerWins++, "You lose!";
   if (playerTotal > dealerTotal) return playerWins++, "You win!";
 };
 //////////////////////////////////////////////////////////////////////
@@ -110,7 +110,6 @@ const gameState = () => `You have${playerHand.map(
 //////////////////////////// Engine ///////////////////////////////
 const round = () => {
   deal();
-  playerHand = [{ value: 10 }, { value: 11 }];
   updatePlayerTotal();
   updateDealerTotal();
 
