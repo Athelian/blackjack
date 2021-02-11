@@ -113,10 +113,11 @@ const round = () => {
   updatePlayerTotal();
   updateDealerTotal();
 
-  if (playerTotal === "Blackjack" && dealerTotal === "Blackjack") {
+  if (playerTotal === "Blackjack") {
+    if (dealerTotal === "Blackjack") dealerTotal = "Irrelevant!"; // In unlikely case of both blackjacks on first hand
     playerTurn = false;
     dealerTurn = false;
-    alert(gameState());
+    return alert(gameState());
   }
 
   while (true) {
