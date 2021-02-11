@@ -142,7 +142,6 @@ const round = () => {
     alert(gameState());
   }
 
-  if (playerTotal === "Bust") endRound();
   else {
     // If we are here we have to focus on either drawing with or surpassing the player
     const target = playerTotal === "Blackjack" ? 21 : playerTotal;
