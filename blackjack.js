@@ -115,16 +115,15 @@ const round = () => {
 
   if (playerTotal === "Blackjack") {
     if (dealerTotal === "Blackjack") dealerTotal = "Irrelevant!"; // In unlikely case of both blackjacks on first hand
-    playerTurn = false;
-    dealerTurn = false;
-    return alert(gameState());
+    return endRound();
   }
 
   while (true) {
     if (playerTotal !== "Blackjack" && confirm(gameState())) {
       playerHand.push(...getRandomCard());
       updatePlayerTotal();
-      if (playerTotal === "Blackjack" || playerTotal === "Bust") break;
+      if (playerTotal === "Blackjack") break;
+      if (playerTotal === "Bust") return endRound();
     } else {
       break;
     }
@@ -139,13 +138,12 @@ const round = () => {
     dealerHand.push(...getRandomCard());
     updateDealerTotal();
     if (dealerTotal === "Blackjack" || dealerTotal === "Bust")
-      return (dealerTurn = false), alert(gameState());
+      return endRound();
     alert(gameState());
   }
 
-  if (playerTotal === "Bust") {
-    (dealerTurn = false), alert(gameState());
-  } else {
+  if (playerTotal === "Bust") endRound();
+  else {
     // If we are here we have to focus on either drawing with or surpassing the player
     const target = playerTotal === "Blackjack" ? 21 : playerTotal;
     while (dealerTotal < target) {
@@ -154,8 +152,14 @@ const round = () => {
       if (dealerTotal === "Blackjack" || dealerTotal === "Bust") break;
       alert(gameState());
     }
-    return (dealerTurn = false), alert(gameState());
+    return endRound();
   }
+};
+
+const endRound = () => {
+  playerTurn = false;
+  dealerTurn = false;
+  return alert(gameState());
 };
 ///////////////////////////////////////////////////////////////////////
 
