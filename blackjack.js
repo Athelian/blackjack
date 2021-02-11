@@ -142,17 +142,15 @@ const round = () => {
     alert(gameState());
   }
 
-  else {
-    // If we are here we have to focus on either drawing with or surpassing the player
-    const target = playerTotal === "Blackjack" ? 21 : playerTotal;
-    while (dealerTotal < target) {
-      dealerHand.push(...getRandomCard());
-      updateDealerTotal();
-      if (dealerTotal === "Blackjack" || dealerTotal === "Bust") break;
-      alert(gameState());
-    }
-    return endRound();
+  // If we are here we have to focus on either drawing with or surpassing the player
+  const target = playerTotal === "Blackjack" ? 21 : playerTotal;
+  while (dealerTotal < target) {
+    dealerHand.push(...getRandomCard());
+    updateDealerTotal();
+    if (dealerTotal === "Blackjack" || dealerTotal === "Bust") break;
+    alert(gameState());
   }
+  return endRound();
 };
 
 const endRound = () => {
