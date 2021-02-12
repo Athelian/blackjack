@@ -6,11 +6,15 @@ import card from "deck-of-cards/lib/card";
 function App() {
   // Instanciate a deck with all cards
   let cards = <div id="container"></div>;
-  let deck = Deck();
 
   useEffect(() => {
+    let deck = Deck();
+    let spareDeck = Deck();
+    let removedCards = spareDeck.cards.splice(13, 40);
+    removedCards.forEach((removedCard) => removedCard.unmount());
     var cardies = document.getElementById("container");
     deck.mount(cardies);
+    spareDeck.mount(cardies);
 
     const o = [];
     var radius = 0.1;
@@ -42,7 +46,7 @@ function App() {
 
     const l = [];
     for (let i = 0; i < 13; i++) {
-      l.push([0.6, 0.18 + i * 0.035]);
+      l.push([0.7, -0.32 + i * 0.042]);
     }
 
     const u = [];
@@ -50,9 +54,29 @@ function App() {
     var numberOfPoints = 24;
     var theta = (Math.PI * 2) / numberOfPoints;
     for (var i = 0; i <= 12; i++) {
-      const pointXu = (radius * Math.cos(theta * i) + 1.35) * 0.53;
-      const pointYu = (radius * Math.sin(theta * i) + 0.22) * 2;
+      const pointXu = (radius * Math.cos(theta * i) + 1.09) * 0.8;
+      const pointYu = (radius * Math.sin(theta * i) - 0.045) * 2.5;
       u.push([pointXu, pointYu]);
+    }
+
+    const s = [];
+    var radius = 0.1;
+    var numberOfPoints = 15;
+    var theta = (Math.PI * 2) / numberOfPoints;
+    for (var i = 8; i <= 12; i++) {
+      const pointXs = (radius * Math.cos(theta * i) + 1.4) * 0.8;
+      const pointYs = (radius * Math.sin(theta * i) - 0.045) * 1.5;
+      s.push([pointXs, pointYs]);
+    }
+    for (var i = 1; i <= 4; i++) {
+      const pointXs = (radius * Math.cos(theta * i) + 1.3) * 0.8;
+      const pointYs = (radius * Math.sin(theta * i) + 0.005) * 1.5;
+      s.push([pointXs, pointYs]);
+    }
+    for (var i = 12; i <= 15; i++) {
+      const pointXs = (radius * Math.cos(theta * i) + 1.3) * 0.8;
+      const pointYs = (radius * Math.sin(theta * i) + 0.05) * 1.5;
+      s.push([pointXs, pointYs]);
     }
 
     deck.cards.forEach((card, index) => {
@@ -85,21 +109,35 @@ function App() {
 
           duration: 500,
           ease: "quartOut",
-          x: l[index - 26] ? l[index - 26][0] * 1500 : 0,
-          y: l[index - 26] ? l[index - 26][1] * 750 : 0,
+          x: l[index - 26]
+            ? l[index - 26][0] * 1200 - window.innerWidth * 0.53
+            : 0,
+          y: l[index - 26] ? l[index - 26][1] * window.innerHeight * 0.8 : 0,
         });
       } else if (index >= 39 && index < 52) {
         card.animateTo({
           delay: 1000, // wait 1 second
           duration: 500,
           ease: "quartOut",
-          x: u[index - 39] ? u[index - 39][0] * 1500 : 0,
-          y: u[index - 39] ? u[index - 39][1] * 750 : 0,
+          x: u[index - 39]
+            ? u[index - 39][0] * 1200 - window.innerWidth * 0.53
+            : 0,
+          y: u[index - 39] ? u[index - 39][1] * window.innerHeight * 0.8 : 0,
         });
       }
     });
-
-    const spareDeck = Deck(true);
+    spareDeck.cards.forEach((card, index) => {
+      card.setSide("front");
+      card.enableFlipping();
+      card.enableDragging();
+      card.animateTo({
+        delay: 1000, // wait 1 second
+        duration: 500,
+        ease: "quartOut",
+        x: s[index] ? s[index][0] * 1200 - window.innerWidth * 0.53 : 0,
+        y: s[index] ? s[index][1] * window.innerHeight * 0.8 : 0,
+      });
+    });
   }, []);
 
   // display it in a html container
@@ -111,8 +149,6 @@ function App() {
           href="https://deck-of-cards.js.org/example.css"
         />
         {cards}
-
-        <span id="S">S</span>
       </header>
     </div>
   );

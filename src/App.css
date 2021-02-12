@@ -37,17 +37,6 @@
   height: 4.5rem;
 }
 
-/* #S {
-  font-size: xx-large;
-  color: white;
-  font-size: 12rem;
-  position: initial;
-  display: inline-block;
-  left: 37.0625rem;
-  top: 8.25rem;
-  padding-left: 37rem;
-} */
-
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
