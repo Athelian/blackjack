@@ -1,7 +1,6 @@
 import "./App.css";
 import Deck from "../node_modules/deck-of-cards/lib/deck";
 import { useEffect } from "react";
-import card from "deck-of-cards/lib/card";
 
 function App() {
   let cards = <div id="container"></div>; //Instantiate
@@ -9,6 +8,7 @@ function App() {
   useEffect(() => {
     let deck = Deck();
     let cardsContainer = document.getElementById("container");
+    let deckContainer = document.getElementsByClassName("deck");
     deck.mount(cardsContainer);
     const jokerDecks = [];
     (() => {
@@ -125,7 +125,19 @@ function App() {
         jokerDecks.forEach((deck) =>
           deck.cards.forEach((card) => card.unmount())
         );
-      }, 500);
+        deck.flip();
+        setTimeout(() => {
+          deckContainer[0].style.position = "absolute";
+          deckContainer[0].style.transition = "bottom 1s";
+          deckContainer[0].style.bottom = "0";
+          setTimeout(() => {
+            deckContainer[0].style.bottom = "-200px";
+            setTimeout(() => {
+              deck.poker();
+            }, 1000);
+          }, 500);
+        });
+      }, 1000);
     }, 7000);
   }, []);
 
