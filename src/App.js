@@ -154,12 +154,14 @@ function App() {
     // Game Start
     if (!gameReady) return;
     deck.poker((dealtCards) =>
-      setPlayerHand((prevHand) => {
-        prevHand.concat(dealtCards);
-      })
+      setPlayerHand((prevHand) => prevHand.concat(dealtCards))
     );
     console.log(1);
   }, [gameReady]);
+
+  useEffect(() => {
+    // Can calculate total here
+  }, [playerHand]);
 
   return (
     <div className="App">
