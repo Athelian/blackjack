@@ -10,16 +10,21 @@ function App() {
     let cardsContainer = document.getElementById("container");
     deck.mount(cardsContainer);
     const jokerDecks = [];
-
     (() => {
       for (let i = 0; i < 4; i++) {
         let spareDeck = Deck(true);
-        let removed = spareDeck.cards.splice(0, 52);
-        removed.forEach((card) => card.unmount());
+        spareDeck.cards.forEach((card) => card.unmount());
+        // let removed = spareDeck.cards.splice(0, 52);
+        // removed.forEach((card) => card.unmount());
         spareDeck.mount(cardsContainer);
         jokerDecks.push(spareDeck);
       }
     })();
+
+    setTimeout(() => {
+      deck.fan();
+      jokerDecks.forEach((deck) => deck.fan());
+    }, 1000);
 
     const oplus = [];
 
@@ -77,7 +82,7 @@ function App() {
       }
     }
 
-    const delay = 1000;
+    const delay = 4000;
     const duration = 500;
     const widthScaleConstant = window.innerWidth * 0.53;
     const heightScaleConstant = window.innerHeight * 0.8;
@@ -111,6 +116,11 @@ function App() {
         });
       });
     });
+
+    setTimeout(() => {
+      deck.shuffle();
+      jokerDecks.forEach((deck) => deck.shuffle());
+    }, 6000);
   }, []);
 
   return (
@@ -121,7 +131,7 @@ function App() {
           href="https://deck-of-cards.js.org/example.css"
         />
       </header>
-      <body>{cards}</body>
+      {cards}
     </div>
   );
 }
