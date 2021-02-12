@@ -1,12 +1,23 @@
 import "./App.css";
 import Deck from "../node_modules/deck-of-cards/lib/deck";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 function App() {
   let cards = <div id="container"></div>; //Instantiate
+  const [gameReady, setGameReady] = useState(false);
+  const [deck, setDeck] = useState([]);
+  const [firstRender, setFirstRender] = useState(true);
+  const [playerHand, setPlayerHand] = useState([]);
+  const [dealerHand, setDealerHand] = useState([]);
 
   useEffect(() => {
-    let deck = Deck();
+    // Initialise Deck
+    setDeck(Deck());
+  }, []);
+
+  useEffect(() => {
+    // Game Intro
+    if (firstRender) return setFirstRender(false); // Waits for deck to be ready
     let cardsContainer = document.getElementById("container");
     let deckContainer = document.getElementsByClassName("deck");
     deck.mount(cardsContainer);
@@ -132,14 +143,23 @@ function App() {
           deckContainer[0].style.bottom = "0";
           setTimeout(() => {
             deckContainer[0].style.bottom = "-200px";
-            setTimeout(() => {
-              deck.poker();
-            }, 1000);
+            setTimeout(() => setGameReady(true), 500);
           }, 500);
         });
       }, 1000);
     }, 7000);
-  }, []);
+  }, [deck]);
+
+  useEffect(() => {
+    // Game Start
+    if (!gameReady) return;
+    deck.poker((dealtCards) =>
+      setPlayerHand((prevHand) => {
+        prevHand.concat(dealtCards);
+      })
+    );
+    console.log(1);
+  }, [gameReady]);
 
   return (
     <div className="App">
