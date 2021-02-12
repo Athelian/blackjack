@@ -1,6 +1,7 @@
 import "./App.css";
 import Deck from "../node_modules/deck-of-cards/lib/deck";
 import { useEffect } from "react";
+import card from "deck-of-cards/lib/card";
 
 function App() {
   let cards = <div id="container"></div>; //Instantiate
@@ -14,7 +15,7 @@ function App() {
       for (let i = 0; i < 4; i++) {
         let spareDeck = Deck(true);
         spareDeck.cards.forEach((card) => card.unmount());
-        // let removed = spareDeck.cards.splice(0, 52);
+        spareDeck.cards.splice(0, 52);
         // removed.forEach((card) => card.unmount());
         spareDeck.mount(cardsContainer);
         jokerDecks.push(spareDeck);
@@ -23,7 +24,12 @@ function App() {
 
     setTimeout(() => {
       deck.fan();
-      jokerDecks.forEach((deck) => deck.fan());
+      setTimeout(() => {
+        jokerDecks.forEach((deck) =>
+          deck.cards.forEach((card) => card.mount(cardsContainer))
+        );
+      }, 3000);
+      // jokerDecks.forEach((deck) => deck.fan());
     }, 1000);
 
     const oplus = [];
@@ -120,6 +126,11 @@ function App() {
     setTimeout(() => {
       deck.shuffle();
       jokerDecks.forEach((deck) => deck.shuffle());
+      setTimeout(() => {
+        jokerDecks.forEach((deck) =>
+          deck.cards.forEach((card) => card.unmount())
+        );
+      }, 500);
     }, 6000);
   }, []);
 
