@@ -24,19 +24,19 @@ function App() {
 
     const p = [];
     for (let i = 0; i < 7; i++) {
-      p.push([0.43, 0.5 + i * 0.06]);
+      p.push([0.45, 0.0 + i * 0.06]);
     }
     var radius = 0.1;
-    var numberOfPoints = 10;
+    var numberOfPoints = 11;
     var theta = (Math.PI * 2) / numberOfPoints;
     for (var i = 0; i <= 2; i++) {
-      const pointXp = (radius * Math.cos(theta * i) + 0.5) * 0.9;
-      const pointYp = (radius * Math.sin(theta * i) + 0.55) * 0.9;
+      const pointXp = (radius * Math.cos(theta * i) + 0.5) * 1;
+      const pointYp = (radius * Math.sin(theta * i) + 0.0) * 1.5;
       p.push([pointXp, pointYp]);
     }
-    for (var i = 7; i <= 10; i++) {
-      const pointXp = (radius * Math.cos(theta * i) + 0.5) * 0.9;
-      const pointYp = (radius * Math.sin(theta * i) + 0.55) * 0.9;
+    for (var i = 8; i <= 12; i++) {
+      const pointXp = (radius * Math.cos(theta * i) + 0.5) * 1;
+      const pointYp = (radius * Math.sin(theta * i) + 0.0) * 1.5;
       p.push([pointXp, pointYp]);
     }
 
@@ -65,8 +65,8 @@ function App() {
           delay: 1000, // wait 1 second
           duration: 500,
           ease: "quartOut",
-          x: o[index][0] * window.innerWidth - window.innerWidth / 2,
-          y: o[index][1] * window.innerHeight - window.innerHeight / 2,
+          x: o[index][0] * 1200 - window.innerWidth * 0.53,
+          y: o[index][1] * 1200 - window.innerHeight * 0.8,
         });
       } else if (index >= 13 && index < 26) {
         card.animateTo({
@@ -75,11 +75,9 @@ function App() {
           duration: 500,
           ease: "quartOut",
           x: p[index - 13]
-            ? p[index - 13][0] * window.innerWidth - window.innerWidth / 2
+            ? p[index - 13][0] * 1200 - window.innerWidth * 0.53
             : 0,
-          y: p[index - 13]
-            ? p[index - 13][1] * window.innerHeight - window.innerHeight / 2
-            : 0,
+          y: p[index - 13] ? p[index - 13][1] * window.innerHeight * 0.8 : 0,
         });
       } else if (index >= 26 && index < 39) {
         card.animateTo({
@@ -87,25 +85,16 @@ function App() {
 
           duration: 500,
           ease: "quartOut",
-          x: l[index - 26]
-            ? l[index - 26][0] * window.innerWidth - window.innerWidth / 2
-            : 0,
-          y: l[index - 26]
-            ? l[index - 26][1] * window.innerHeight - window.innerHeight / 2
-            : 0,
+          x: l[index - 26] ? l[index - 26][0] * 1500 : 0,
+          y: l[index - 26] ? l[index - 26][1] * 750 : 0,
         });
-        console.log(1 * window.innerWidth - window.innerWidth / 2);
       } else if (index >= 39 && index < 52) {
         card.animateTo({
           delay: 1000, // wait 1 second
           duration: 500,
           ease: "quartOut",
-          x: u[index - 39]
-            ? u[index - 39][0] * window.innerWidth - window.innerWidth / 2
-            : 0,
-          y: u[index - 39]
-            ? u[index - 39][1] * window.innerHeight - window.innerHeight / 2
-            : 0,
+          x: u[index - 39] ? u[index - 39][0] * 1500 : 0,
+          y: u[index - 39] ? u[index - 39][1] * 750 : 0,
         });
       }
     });
