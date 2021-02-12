@@ -23,13 +23,15 @@ function App() {
     })();
 
     setTimeout(() => {
-      deck.fan();
+      deck.sort();
       setTimeout(() => {
-        jokerDecks.forEach((deck) =>
-          deck.cards.forEach((card) => card.mount(cardsContainer))
-        );
-      }, 3000);
-      // jokerDecks.forEach((deck) => deck.fan());
+        deck.fan();
+        setTimeout(() => {
+          jokerDecks.forEach((deck) =>
+            deck.cards.forEach((card) => card.mount(cardsContainer))
+          );
+        }, 3000);
+      }, 1000);
     }, 1000);
 
     const oplus = [];
@@ -88,12 +90,12 @@ function App() {
       }
     }
 
-    const delay = 4000;
+    const delay = 5000;
     const duration = 500;
     const widthScaleConstant = window.innerWidth * 0.53;
     const heightScaleConstant = window.innerHeight * 0.8;
 
-    deck.cards.forEach((card, index) => {
+    const animateTitle = (card, index) => {
       card.setSide("front");
       card.enableFlipping();
       card.enableDragging();
@@ -104,22 +106,15 @@ function App() {
         x: oplus[index][0] * 1200 - widthScaleConstant,
         y: oplus[index][1] * heightScaleConstant,
       });
+    };
+
+    deck.cards.forEach((card, index) => {
+      animateTitle(card, index);
     });
 
     jokerDecks.forEach((array, indexArray) => {
       array.cards.forEach((card, indexCard) => {
-        card.setSide("front");
-        card.enableFlipping();
-        card.enableDragging();
-        card.animateTo({
-          delay: delay,
-          duration: duration,
-          ease: "quartOut",
-          x:
-            oplus[indexArray * 3 + indexCard + 52][0] * 1200 -
-            widthScaleConstant,
-          y: oplus[indexArray * 3 + indexCard + 52][1] * heightScaleConstant,
-        });
+        animateTitle(card, indexArray * 3 + indexCard + 52);
       });
     });
 
@@ -131,7 +126,7 @@ function App() {
           deck.cards.forEach((card) => card.unmount())
         );
       }, 500);
-    }, 6000);
+    }, 7000);
   }, []);
 
   return (
