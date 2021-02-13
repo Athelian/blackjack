@@ -166,21 +166,22 @@ function App() {
       deck.blackjack.open((dealtCards) => {
         setDealerHand((prevHand) => prevHand.concat(dealtCards));
         setPlayerTurn(true);
-        setTimeout(() => setHit(true), 1000);
+        // deck.cards[deck.cards.length - 1].set;
+        // setTimeout(() => setHit(true), 1000);
       }, false);
     }, true);
   }, [gameReady]);
 
-  useEffect(() => {
-    if (!playerHand.length) return;
-    const total = calcHand(playerHand);
-    if (total === "Bust" || total === "Blackjack") {
-      setPlayerTurn(false);
-      setDealerTurn(true);
-    } else {
-      deck.blackjack.hit(setPlayerHand, true, playerHand);
-    }
-  }, [hit]);
+  // useEffect(() => {
+  //   if (!playerHand.length) return;
+  //   const total = calcHand(playerHand);
+  //   if (total === "Bust" || total === "Blackjack") {
+  //     setPlayerTurn(false);
+  //     setDealerTurn(true);
+  //   } else {
+  //     deck.blackjack.hit(setPlayerHand, true, playerHand);
+  //   }
+  // }, [hit]);
 
   useEffect(() => {
     if (!dealerTurn) return;
@@ -218,6 +219,16 @@ function App() {
           href="https://deck-of-cards.js.org/example.css"
         />
       </header>
+      {playerTurn ? (
+        <div id="choice">
+          <button className="big-button">
+            <span>Hit</span>
+          </button>
+          <button className="big-button">
+            <span>Stay</span>
+          </button>
+        </div>
+      ) : null}
       {cards}
     </div>
   );
