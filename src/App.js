@@ -9,6 +9,8 @@ function App() {
   const [firstRender, setFirstRender] = useState(true);
   const [playerHand, setPlayerHand] = useState([]);
   const [dealerHand, setDealerHand] = useState([]);
+  const [playerTurn, setPlayerTurn] = useState();
+  const [dealerTurn, setDealerTurn] = useState();
 
   useEffect(() => {
     // Initialise Deck
@@ -139,10 +141,15 @@ function App() {
         deck.flip();
         setTimeout(() => {
           deckContainer[0].style.position = "absolute";
-          deckContainer[0].style.transition = "bottom 1s";
-          deckContainer[0].style.bottom = "0";
+          deckContainer[0].style.transition = "left 1s";
+          deckContainer[0].style.left = "0";
           setTimeout(() => {
-            deckContainer[0].style.bottom = "-200px";
+            deckContainer[0].style.left = "343px";
+            deck.cards.forEach((card) => {
+              card.setSide("back");
+              card.disableFlipping();
+              card.disableDragging();
+            });
             setTimeout(() => setGameReady(true), 500);
           }, 500);
         });
@@ -153,15 +160,53 @@ function App() {
   useEffect(() => {
     // Game Start
     if (!gameReady) return;
-    deck.poker((dealtCards) =>
-      setPlayerHand((prevHand) => prevHand.concat(dealtCards))
-    );
-    console.log(1);
+    deck.blackjack.open((dealtCards) => {
+      setPlayerHand((prevHand) => prevHand.concat(dealtCards));
+      deck.blackjack.open((dealtCards) => {
+        setDealerHand((prevHand) => prevHand.concat(dealtCards));
+        setPlayerTurn(true);
+      }, false);
+    }, true);
   }, [gameReady]);
 
   useEffect(() => {
-    // Can calculate total here
+    if (!playerHand.length) return;
+    const total = calcHand(playerHand);
+    if (total === "Bust" || total === "Blackjack") {
+      setPlayerTurn(false);
+      setDealerTurn(true);
+    } else {
+      // Offer hit
+    }
   }, [playerHand]);
+
+  useEffect(() => {
+    if (!dealerTurn) return;
+  }, [dealerTurn]);
+
+  const calcHand = (hand) => {
+    let aces = 0; // Ace counter
+    let total = hand.reduce((acc, value) => {
+      if (value === 1) {
+        aces++;
+        return ++acc; // Increase by one if the card is an ace
+      } else {
+        return (acc += value); // Else by it's value
+      }
+    }, 0);
+    // Add ace bonuses as long as they don't result in bust
+    while (aces && total + 10 <= 21) {
+      total += 10;
+      aces--;
+    }
+
+    if (total > 21) {
+      return "Bust";
+    } else if (total === 21) {
+      return "Blackjack";
+    }
+    return total;
+  };
 
   return (
     <div className="App">
