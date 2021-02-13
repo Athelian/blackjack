@@ -6,8 +6,7 @@
 .pnp.js
 
 #but not
-!deck-of-cards
-!/node_modules/deck-of-cards
+!/node_modules/deck-of-cards/lib/modules/blackjack.js
 
 /.vscode
 
