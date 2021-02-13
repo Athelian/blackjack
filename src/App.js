@@ -11,6 +11,7 @@ function App() {
   const [dealerHand, setDealerHand] = useState([]);
   const [playerTurn, setPlayerTurn] = useState();
   const [dealerTurn, setDealerTurn] = useState();
+  const [hit, setHit] = useState();
 
   useEffect(() => {
     // Initialise Deck
@@ -165,6 +166,7 @@ function App() {
       deck.blackjack.open((dealtCards) => {
         setDealerHand((prevHand) => prevHand.concat(dealtCards));
         setPlayerTurn(true);
+        setTimeout(() => setHit(true), 1000);
       }, false);
     }, true);
   }, [gameReady]);
@@ -176,9 +178,9 @@ function App() {
       setPlayerTurn(false);
       setDealerTurn(true);
     } else {
-      // Offer hit
+      deck.blackjack.hit(setPlayerHand, true, playerHand);
     }
-  }, [playerHand]);
+  }, [hit]);
 
   useEffect(() => {
     if (!dealerTurn) return;
