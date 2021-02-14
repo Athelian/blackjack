@@ -29,7 +29,8 @@
 
 /*These beautiful buttons are not my own work - Eliot*/
 button {
-  margin: 10px;
+  left: 12px;
+  margin: 5px;
   position: relative;
   display: inline-block;
   cursor: pointer;
@@ -50,7 +51,7 @@ button.big-button {
   border-radius: 1em;
   background: var(--colorShadeE);
   transform-style: preserve-3d;
-  transition: all 175ms cubic-bezier(0, 0, 1, 1);
+  transition: all 50ms cubic-bezier(0, 0, 1, 1);
 }
 button.big-button::before {
   position: absolute;
@@ -65,7 +66,7 @@ button.big-button::before {
   border-radius: inherit;
   box-shadow: 0 0 0 2px var(--colorShadeB), 0 0.75em 0 0 var(--colorShadeA);
   transform: translate3d(0, 0.75em, -1em);
-  transition: all 175ms cubic-bezier(0, 0, 1, 1);
+  transition: all 50ms cubic-bezier(0, 0, 1, 1);
 }
 
 button.big-button:hover {

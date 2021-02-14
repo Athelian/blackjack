@@ -166,26 +166,9 @@ function App() {
       deck.blackjack.open((dealtCards) => {
         setDealerHand((prevHand) => prevHand.concat(dealtCards));
         setPlayerTurn(true);
-        // deck.cards[deck.cards.length - 1].set;
-        // setTimeout(() => setHit(true), 1000);
       }, false);
     }, true);
   }, [gameReady]);
-
-  // useEffect(() => {
-  //   if (!playerHand.length) return;
-  //   const total = calcHand(playerHand);
-  //   if (total === "Bust" || total === "Blackjack") {
-  //     setPlayerTurn(false);
-  //     setDealerTurn(true);
-  //   } else {
-  //     deck.blackjack.hit(setPlayerHand, true, playerHand);
-  //   }
-  // }, [hit]);
-
-  useEffect(() => {
-    if (!dealerTurn) return;
-  }, [dealerTurn]);
 
   const calcHand = (hand) => {
     let aces = 0; // Ace counter
@@ -211,6 +194,17 @@ function App() {
     return total;
   };
 
+  let time;
+
+  const mouseDown = () => {
+    console.log("fuck");
+    time = Date.now();
+  };
+  const mouseUp = () => {
+    console.log(Date.now());
+    return Date.now() - time > 400;
+  };
+
   return (
     <div className="App">
       <header className="App-header">
@@ -221,10 +215,28 @@ function App() {
       </header>
       {playerTurn ? (
         <div id="choice">
-          <button className="big-button">
+          <button
+            className="big-button"
+            onMouseDown={() => mouseDown()}
+            onMouseUp={() => {
+              if (!mouseUp()) return (time = null);
+              deck.blackjack.hit(setPlayerHand, true, playerHand);
+              time = null;
+            }}
+          >
             <span>Hit</span>
           </button>
-          <button className="big-button">
+          <button
+            className="big-button"
+            onMouseDown={() => mouseDown()}
+            onMouseUp={() => {
+              if (!mouseUp()) return (time = null);
+              dealerHand.forEach((card, index) =>
+                card.blackjack.stay(() => console.log("done"), index)
+              );
+              time = null;
+            }}
+          >
             <span>Stay</span>
           </button>
         </div>
