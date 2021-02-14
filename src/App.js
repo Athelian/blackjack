@@ -9,9 +9,10 @@ function App() {
   const [firstRender, setFirstRender] = useState(true);
   const [playerHand, setPlayerHand] = useState([]);
   const [dealerHand, setDealerHand] = useState([]);
+  const [playerTotal, setPlayerTotal] = useState(0);
+  const [dealerTotal, setDealerTotal] = useState(0);
   const [playerTurn, setPlayerTurn] = useState();
   const [dealerTurn, setDealerTurn] = useState();
-  const [hit, setHit] = useState();
 
   useEffect(() => {
     // Initialise Deck
@@ -172,12 +173,12 @@ function App() {
 
   const calcHand = (hand) => {
     let aces = 0; // Ace counter
-    let total = hand.reduce((acc, value) => {
-      if (value === 1) {
+    let total = hand.reduce((acc, card) => {
+      if (card.rank === 1) {
         aces++;
         return ++acc; // Increase by one if the card is an ace
       } else {
-        return (acc += value); // Else by it's value
+        return (acc += card.rank); // Else by it's value
       }
     }, 0);
     // Add ace bonuses as long as they don't result in bust
@@ -185,18 +186,44 @@ function App() {
       total += 10;
       aces--;
     }
-
-    if (total > 21) {
-      return "Bust";
-    } else if (total === 21) {
-      return "Blackjack";
-    }
     return total;
   };
 
+  useEffect(() => {
+    if (!dealerTurn) return;
+    if (dealerTotal > playerTotal) console.log("lose");
+  }, [dealerTurn]);
+
+  useEffect(() => {
+    if (playerHand.length) setPlayerTotal(calcHand(playerHand));
+    console.log("calc");
+  }, [playerHand]);
+  useEffect(
+    () => (dealerHand.length ? setDealerTotal(calcHand(dealerHand)) : null),
+    [dealerHand.length]
+  );
+  useEffect(
+    () =>
+      playerTotal > 21
+        ? console.log("lose")
+        : playerTotal === 21
+        ? console.log("win")
+        : null,
+    [playerTotal]
+  );
+  useEffect(
+    () =>
+      dealerTotal > 21
+        ? console.log("win", dealerTotal)
+        : dealerTotal === 21
+        ? console.log("lose", dealerTotal)
+        : null,
+    [dealerTotal]
+  );
+
   let time;
   const getTime = () => (time = Date.now());
-  const checkInterval = () => Date.now() - time > 400;
+  const checkInterval = () => Date.now() - time > 200;
 
   return (
     <div className="App">
@@ -211,7 +238,7 @@ function App() {
           <button
             className="big-button"
             onMouseDown={() => getTime()}
-            onMouseUp={() => {
+            onMouseUp={async () => {
               if (!checkInterval()) return (time = null);
               deck.blackjack.hit(setPlayerHand, true, playerHand);
               time = null;
@@ -224,9 +251,11 @@ function App() {
             onMouseDown={() => getTime()}
             onMouseUp={() => {
               if (!checkInterval()) return (time = null);
-              dealerHand.forEach((card, index) =>
-                card.blackjack.stay(() => console.log("done"), index)
-              );
+              dealerHand.forEach((card, index) => {
+                card.blackjack.stay(() => console.log("done"), index);
+              });
+              setPlayerTurn(false);
+              setDealerTurn(true);
               time = null;
             }}
           >
