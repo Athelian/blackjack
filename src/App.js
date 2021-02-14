@@ -173,12 +173,12 @@ function App() {
     // Game Start
     if (!gameReady) return;
     deck.blackjack.open((dealtCards) => {
-      setDealerHand((prevHand) => prevHand.concat(dealtCards));
+      setPlayerHand((prevHand) => prevHand.concat(dealtCards));
       deck.blackjack.open((dealtCards) => {
-        setPlayerHand((prevHand) => prevHand.concat(dealtCards));
+        setDealerHand((prevHand) => prevHand.concat(dealtCards));
         setPlayerTurn(true);
-      }, true);
-    }, false);
+      }, false);
+    }, true);
   }, [gameReady]);
 
   useEffect(() => {
