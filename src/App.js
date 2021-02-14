@@ -21,7 +21,6 @@ function App() {
     tie: 0,
   });
   const [showScoreboard, setShowScoreboard] = useState(false);
-  let time; // Used below to time the button press -> release interval
 
   useEffect(() => {
     // Initialise Deck
@@ -278,10 +277,6 @@ function App() {
     }, 2000);
   };
 
-  const getTime = () => (time = Date.now());
-
-  const checkInterval = () => Date.now() - time > 200;
-
   return (
     <div className="App">
       <header className="App-header">
@@ -302,26 +297,20 @@ function App() {
         <div id="choice">
           <button
             className="big-button"
-            onMouseDown={() => getTime()}
-            onMouseUp={async () => {
-              if (!checkInterval()) return (time = null);
+            onClick={() => {
               deck.blackjack.hit(setPlayerHand, true, playerHand);
-              time = null;
             }}
           >
             <span>Hit</span>
           </button>
           <button
             className="big-button"
-            onMouseDown={() => getTime()}
-            onMouseUp={() => {
-              if (!checkInterval()) return (time = null);
+            onClick={() => {
               dealerHand.forEach((card, index) => {
                 card.blackjack.stay(index);
               });
               setPlayerTurn(false);
               setDealerTurn(true);
-              time = null;
             }}
           >
             <span>Stay</span>
