@@ -6,22 +6,31 @@ function App() {
   let cards = <div id="container"></div>; //Instantiate
   const [gameReady, setGameReady] = useState(false);
   const [deck, setDeck] = useState([]);
-  const [firstRender, setFirstRender] = useState(true);
+  const [deckReady, setDeckReady] = useState(false);
+  const [deckReshuffle, setDeckReshuffle] = useState(false);
   const [playerHand, setPlayerHand] = useState([]);
   const [dealerHand, setDealerHand] = useState([]);
   const [playerTotal, setPlayerTotal] = useState(0);
   const [dealerTotal, setDealerTotal] = useState(0);
   const [playerTurn, setPlayerTurn] = useState();
   const [dealerTurn, setDealerTurn] = useState();
+  const [scoreboard, setScoreboad] = useState({
+    games: 0,
+    dealerWins: 0,
+    playerWins: 0,
+    ties: 0,
+  });
+  const [showScoreboard, setShowScoreboard] = useState(false);
 
   useEffect(() => {
     // Initialise Deck
     setDeck(Deck());
+    setDeckReady(true);
   }, []);
 
   useEffect(() => {
     // Game Intro
-    if (firstRender) return setFirstRender(false); // Waits for deck to be ready
+    if (!deckReady) return; // Waits for deck to be ready
     let cardsContainer = document.getElementById("container");
     let deckContainer = document.getElementsByClassName("deck");
     deck.mount(cardsContainer);
@@ -141,23 +150,24 @@ function App() {
           deck.cards.forEach((card) => card.unmount())
         );
         deck.flip();
+        deckContainer[0].style.position = "absolute";
+        deckContainer[0].style.transition = "left 1s";
+        deckContainer[0].style.left = "0";
         setTimeout(() => {
-          deckContainer[0].style.position = "absolute";
-          deckContainer[0].style.transition = "left 1s";
-          deckContainer[0].style.left = "0";
+          deckContainer[0].style.left = "343px";
+          deck.cards.forEach((card) => {
+            card.setSide("back");
+            card.disableFlipping();
+            card.disableDragging();
+          });
           setTimeout(() => {
-            deckContainer[0].style.left = "343px";
-            deck.cards.forEach((card) => {
-              card.setSide("back");
-              card.disableFlipping();
-              card.disableDragging();
-            });
-            setTimeout(() => setGameReady(true), 500);
+            setGameReady(true);
+            setShowScoreboard(true);
           }, 500);
-        });
+        }, 500);
       }, 1000);
     }, 7000);
-  }, [deck]);
+  }, [deckReady]);
 
   useEffect(() => {
     // Game Start
@@ -171,6 +181,12 @@ function App() {
     }, true);
   }, [gameReady]);
 
+  useEffect(() => {
+    if (!playerTurn) return;
+    if (playerTurn && playerTotal === 21)
+      return setTimeout(() => gameOver("win"));
+  }, [playerTurn]);
+
   const calcHand = (hand) => {
     let aces = 0; // Ace counter
     let total = hand.reduce((acc, card) => {
@@ -178,7 +194,7 @@ function App() {
         aces++;
         return ++acc; // Increase by one if the card is an ace
       } else if (card.rank > 10) {
-        acc += 10;
+        return (acc += 10);
       } else {
         return (acc += card.rank); // Else by it's value
       }
@@ -193,35 +209,84 @@ function App() {
 
   useEffect(() => {
     if (!dealerTurn) return;
-    if (dealerTotal > playerTotal) console.log("lose");
+    if (dealerTotal >= 17) {
+      if (dealerTotal === 21) return gameOver("lose");
+      if (dealerTotal === playerTotal) return gameOver();
+      if (dealerTotal < playerTotal) return gameOver("win");
+      return gameOver("lose");
+    }
+    setTimeout(
+      () => deck.blackjack.hit(setDealerHand, false, dealerHand),
+      2000
+    );
   }, [dealerTurn]);
 
-  useEffect(() => {
-    if (playerHand.length) setPlayerTotal(calcHand(playerHand));
-    console.log("calc");
-  }, [playerHand]);
+  useEffect(
+    () => (playerHand.length ? setPlayerTotal(calcHand(playerHand)) : null),
+    [playerHand]
+  );
   useEffect(
     () => (dealerHand.length ? setDealerTotal(calcHand(dealerHand)) : null),
-    [dealerHand.length]
+    [dealerHand]
   );
   useEffect(
     () =>
-      playerTotal > 21
-        ? console.log("lose")
-        : playerTotal === 21
-        ? console.log("win")
+      playerTotal
+        ? playerTotal > 21
+          ? gameOver("lose")
+          : playerTotal === 21
+          ? gameOver("win")
+          : null
         : null,
     [playerTotal]
   );
-  useEffect(
-    () =>
-      dealerTotal > 21
-        ? console.log("win", dealerTotal)
-        : dealerTotal === 21
-        ? console.log("lose", dealerTotal)
-        : null,
-    [dealerTotal]
-  );
+  useEffect(() => {
+    if (!dealerTurn) return;
+    if (dealerTotal > 21) return gameOver("win");
+    if (dealerTotal === 21) return gameOver("lose");
+    if (dealerTotal < 17)
+      return setTimeout(
+        () => deck.blackjack.hit(setDealerHand, false, dealerHand),
+        2000
+      );
+    if (dealerTotal === playerTotal) return gameOver();
+    if (dealerTotal < playerTotal) return gameOver("win");
+    return gameOver("lose");
+  }, [dealerTotal]);
+
+  const gameOver = (result) => {
+    setPlayerHand([]);
+    setDealerHand([]);
+    setPlayerTurn(false);
+    setDealerTurn(false);
+    setPlayerTotal(0);
+    setDealerTotal(0);
+    setGameReady(false);
+    setTimeout(() => {
+      deck.cards = deck.cards.concat(playerHand).concat(dealerHand);
+      deck.cards.forEach((card) => card.setSide("back"));
+      setDeck(deck);
+      setDeckReshuffle(true);
+      setScoreboad((prev) => {
+        prev.games++;
+        prev[
+          result === "win"
+            ? "playerWins"
+            : result === "lose"
+            ? "dealerWins"
+            : "ties"
+        ]++;
+        return { ...prev };
+      });
+      setTimeout(() => setGameReady(true), 2000);
+    }, 2000);
+  };
+
+  useEffect(() => {
+    if (!deckReshuffle) return;
+    deck.shuffle();
+    setDeckReshuffle(false);
+  }, [deckReshuffle]);
 
   let time;
   const getTime = () => (time = Date.now());
@@ -235,6 +300,14 @@ function App() {
           href="https://deck-of-cards.js.org/example.css"
         />
       </header>
+      {showScoreboard ? (
+        <div id="scoreboard">
+          <div>Games: {scoreboard.games}</div>
+          <div>Wins: {scoreboard.playerWins}</div>
+          <div>Losses: {scoreboard.dealerWins}</div>
+          <div>Ties: {scoreboard.ties}</div>
+        </div>
+      ) : null}
       {playerTurn ? (
         <div id="choice">
           <button

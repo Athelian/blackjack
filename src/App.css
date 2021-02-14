@@ -12,6 +12,14 @@
   display: flex;
 }
 
+#scoreboard {
+  color: white;
+  height: 100%;
+  position: fixed;
+  top: calc(43% + 1.5rem);
+  left: 20%;
+}
+
 #container {
   position: absolute;
 }
