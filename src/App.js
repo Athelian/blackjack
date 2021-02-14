@@ -16,12 +16,12 @@ function App() {
   const [dealerTurn, setDealerTurn] = useState();
   const [scoreboard, setScoreboad] = useState({
     games: 0,
-    dealerWins: 0,
-    playerWins: 0,
-    ties: 0,
+    win: 0,
+    loss: 0,
+    tie: 0,
   });
   const [showScoreboard, setShowScoreboard] = useState(false);
-  let time;
+  let time; // Used below to time the button press -> release interval
 
   useEffect(() => {
     // Initialise Deck
@@ -183,30 +183,28 @@ function App() {
   }, [gameReady]);
 
   useEffect(() => {
-    if (!playerTurn) return;
-    if (playerTurn && playerTotal === 21)
-      return setTimeout(() => gameOver("win"));
-  }, [playerTurn]);
-
-  useEffect(() => {
+    // Dealer can begin
     return playDealer();
   }, [dealerTurn]);
 
   useEffect(
+    // Every time the player grabs a card, update their total
     () => (playerHand.length ? setPlayerTotal(calcHand(playerHand)) : null),
     [playerHand]
   );
 
   useEffect(
+    // Every time the dealer grabs a card, update their total
     () => (dealerHand.length ? setDealerTotal(calcHand(dealerHand)) : null),
     [dealerHand]
   );
 
   useEffect(
+    // While playing, check that player does not either bust or blackjack
     () =>
       playerTotal
         ? playerTotal > 21
-          ? gameOver("lose")
+          ? gameOver("loss")
           : playerTotal === 21
           ? gameOver("win")
           : null
@@ -244,20 +242,19 @@ function App() {
     return total;
   };
 
-  const playDealer = () => {
-    if (!dealerTurn) return;
-    if (dealerTotal >= 17) {
-      if (dealerTotal > 21) return gameOver("win");
-      if (dealerTotal === 21) return gameOver("lose");
-      if (dealerTotal === playerTotal) return gameOver();
-      if (dealerTotal < playerTotal) return gameOver("win");
-      return gameOver("lose");
-    }
-    setTimeout(
-      () => deck.blackjack.hit(setDealerHand, false, dealerHand),
-      2000
-    );
-  };
+  const playDealer = () =>
+    dealerTurn
+      ? dealerTotal >= 17
+        ? dealerTotal > 21 || dealerTotal < playerTotal
+          ? gameOver("win")
+          : dealerTotal === playerTotal
+          ? gameOver("tie")
+          : gameOver("loss")
+        : setTimeout(
+            () => deck.blackjack.hit(setDealerHand, false, dealerHand),
+            2000
+          )
+      : null;
 
   const gameOver = (result) => {
     setPlayerHand([]);
@@ -271,16 +268,10 @@ function App() {
       deck.cards = deck.cards.concat(playerHand).concat(dealerHand);
       deck.cards.forEach((card) => card.setSide("back"));
       setDeck(deck);
-      setDeckReshuffle(true);
+      setDeckReshuffle(true); // Needs to wait for line above, check the useEffect
       setScoreboad((prev) => {
         prev.games++;
-        prev[
-          result === "win"
-            ? "playerWins"
-            : result === "lose"
-            ? "dealerWins"
-            : "ties"
-        ]++;
+        prev[result]++;
         return { ...prev };
       });
       setTimeout(() => setGameReady(true), 2000);
@@ -302,9 +293,9 @@ function App() {
       {showScoreboard ? (
         <div id="scoreboard">
           <div>Games: {scoreboard.games}</div>
-          <div>Wins: {scoreboard.playerWins}</div>
-          <div>Losses: {scoreboard.dealerWins}</div>
-          <div>Ties: {scoreboard.ties}</div>
+          <div>Wins: {scoreboard.win}</div>
+          <div>Losses: {scoreboard.loss}</div>
+          <div>Ties: {scoreboard.tie}</div>
         </div>
       ) : null}
       {playerTurn ? (
@@ -326,7 +317,7 @@ function App() {
             onMouseUp={() => {
               if (!checkInterval()) return (time = null);
               dealerHand.forEach((card, index) => {
-                card.blackjack.stay(() => console.log("done"), index);
+                card.blackjack.stay(index);
               });
               setPlayerTurn(false);
               setDealerTurn(true);
