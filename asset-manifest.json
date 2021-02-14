@@ -1,20 +1,20 @@
 {
   "files": {
     "main.css": "/oplus/static/css/main.d9e31ccb.chunk.css",
-    "main.js": "/oplus/static/js/main.20997c94.chunk.js",
-    "main.js.map": "/oplus/static/js/main.20997c94.chunk.js.map",
+    "main.js": "/oplus/static/js/main.a339ca96.chunk.js",
+    "main.js.map": "/oplus/static/js/main.a339ca96.chunk.js.map",
     "runtime-main.js": "/oplus/static/js/runtime-main.d6ea4af7.js",
     "runtime-main.js.map": "/oplus/static/js/runtime-main.d6ea4af7.js.map",
-    "static/js/2.1a4a5fae.chunk.js": "/oplus/static/js/2.1a4a5fae.chunk.js",
-    "static/js/2.1a4a5fae.chunk.js.map": "/oplus/static/js/2.1a4a5fae.chunk.js.map",
+    "static/js/2.64794707.chunk.js": "/oplus/static/js/2.64794707.chunk.js",
+    "static/js/2.64794707.chunk.js.map": "/oplus/static/js/2.64794707.chunk.js.map",
     "index.html": "/oplus/index.html",
     "static/css/main.d9e31ccb.chunk.css.map": "/oplus/static/css/main.d9e31ccb.chunk.css.map",
-    "static/js/2.1a4a5fae.chunk.js.LICENSE.txt": "/oplus/static/js/2.1a4a5fae.chunk.js.LICENSE.txt"
+    "static/js/2.64794707.chunk.js.LICENSE.txt": "/oplus/static/js/2.64794707.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.d6ea4af7.js",
-    "static/js/2.1a4a5fae.chunk.js",
+    "static/js/2.64794707.chunk.js",
     "static/css/main.d9e31ccb.chunk.css",
-    "static/js/main.20997c94.chunk.js"
+    "static/js/main.a339ca96.chunk.js"
   ]
 }
