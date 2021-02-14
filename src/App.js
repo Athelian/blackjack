@@ -195,15 +195,8 @@ function App() {
   };
 
   let time;
-
-  const mouseDown = () => {
-    console.log("fuck");
-    time = Date.now();
-  };
-  const mouseUp = () => {
-    console.log(Date.now());
-    return Date.now() - time > 400;
-  };
+  const getTime = () => (time = Date.now());
+  const checkInterval = () => Date.now() - time > 400;
 
   return (
     <div className="App">
@@ -217,9 +210,9 @@ function App() {
         <div id="choice">
           <button
             className="big-button"
-            onMouseDown={() => mouseDown()}
+            onMouseDown={() => getTime()}
             onMouseUp={() => {
-              if (!mouseUp()) return (time = null);
+              if (!checkInterval()) return (time = null);
               deck.blackjack.hit(setPlayerHand, true, playerHand);
               time = null;
             }}
@@ -228,9 +221,9 @@ function App() {
           </button>
           <button
             className="big-button"
-            onMouseDown={() => mouseDown()}
+            onMouseDown={() => getTime()}
             onMouseUp={() => {
-              if (!mouseUp()) return (time = null);
+              if (!checkInterval()) return (time = null);
               dealerHand.forEach((card, index) =>
                 card.blackjack.stay(() => console.log("done"), index)
               );
