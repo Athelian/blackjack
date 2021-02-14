@@ -16,8 +16,8 @@
   color: white;
   height: 100%;
   position: fixed;
-  top: calc(43% + 1.5rem);
-  left: 20%;
+  top: calc(41% + 1.5rem);
+  left: 29%;
 }
 
 #container {
@@ -37,8 +37,9 @@
 
 /*These beautiful buttons are not my own work - Eliot*/
 button {
-  left: 12px;
+  left: 6px;
   margin: 5px;
+  width: 120px;
   position: relative;
   display: inline-block;
   cursor: pointer;
