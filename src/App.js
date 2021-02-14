@@ -21,6 +21,7 @@ function App() {
     ties: 0,
   });
   const [showScoreboard, setShowScoreboard] = useState(false);
+  let time;
 
   useEffect(() => {
     // Initialise Deck
@@ -187,6 +188,42 @@ function App() {
       return setTimeout(() => gameOver("win"));
   }, [playerTurn]);
 
+  useEffect(() => {
+    return playDealer();
+  }, [dealerTurn]);
+
+  useEffect(
+    () => (playerHand.length ? setPlayerTotal(calcHand(playerHand)) : null),
+    [playerHand]
+  );
+
+  useEffect(
+    () => (dealerHand.length ? setDealerTotal(calcHand(dealerHand)) : null),
+    [dealerHand]
+  );
+
+  useEffect(
+    () =>
+      playerTotal
+        ? playerTotal > 21
+          ? gameOver("lose")
+          : playerTotal === 21
+          ? gameOver("win")
+          : null
+        : null,
+    [playerTotal]
+  );
+
+  useEffect(() => {
+    if (!deckReshuffle) return;
+    deck.shuffle();
+    setDeckReshuffle(false);
+  }, [deckReshuffle]);
+
+  useEffect(() => {
+    return playDealer();
+  }, [dealerTotal]);
+
   const calcHand = (hand) => {
     let aces = 0; // Ace counter
     let total = hand.reduce((acc, card) => {
@@ -207,9 +244,10 @@ function App() {
     return total;
   };
 
-  useEffect(() => {
+  const playDealer = () => {
     if (!dealerTurn) return;
     if (dealerTotal >= 17) {
+      if (dealerTotal > 21) return gameOver("win");
       if (dealerTotal === 21) return gameOver("lose");
       if (dealerTotal === playerTotal) return gameOver();
       if (dealerTotal < playerTotal) return gameOver("win");
@@ -219,40 +257,7 @@ function App() {
       () => deck.blackjack.hit(setDealerHand, false, dealerHand),
       2000
     );
-  }, [dealerTurn]);
-
-  useEffect(
-    () => (playerHand.length ? setPlayerTotal(calcHand(playerHand)) : null),
-    [playerHand]
-  );
-  useEffect(
-    () => (dealerHand.length ? setDealerTotal(calcHand(dealerHand)) : null),
-    [dealerHand]
-  );
-  useEffect(
-    () =>
-      playerTotal
-        ? playerTotal > 21
-          ? gameOver("lose")
-          : playerTotal === 21
-          ? gameOver("win")
-          : null
-        : null,
-    [playerTotal]
-  );
-  useEffect(() => {
-    if (!dealerTurn) return;
-    if (dealerTotal > 21) return gameOver("win");
-    if (dealerTotal === 21) return gameOver("lose");
-    if (dealerTotal < 17)
-      return setTimeout(
-        () => deck.blackjack.hit(setDealerHand, false, dealerHand),
-        2000
-      );
-    if (dealerTotal === playerTotal) return gameOver();
-    if (dealerTotal < playerTotal) return gameOver("win");
-    return gameOver("lose");
-  }, [dealerTotal]);
+  };
 
   const gameOver = (result) => {
     setPlayerHand([]);
@@ -282,14 +287,8 @@ function App() {
     }, 2000);
   };
 
-  useEffect(() => {
-    if (!deckReshuffle) return;
-    deck.shuffle();
-    setDeckReshuffle(false);
-  }, [deckReshuffle]);
-
-  let time;
   const getTime = () => (time = Date.now());
+
   const checkInterval = () => Date.now() - time > 200;
 
   return (
