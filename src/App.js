@@ -177,6 +177,8 @@ function App() {
       if (card.rank === 1) {
         aces++;
         return ++acc; // Increase by one if the card is an ace
+      } else if (card.rank > 10) {
+        acc += 10;
       } else {
         return (acc += card.rank); // Else by it's value
       }
